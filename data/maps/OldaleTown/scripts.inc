@@ -400,7 +400,7 @@ TestTrainerScript::
 	lock
 	faceplayer
 	giveitem ITEM_RARE_CANDY, 99
-	givemon SPECIES_DEWGONG, 5, ITEM_NONE
+	givemon SPECIES_KOFFING, 5, ITEM_NONE
 	msgbox TestTrainerScript_Text, MSGBOX_NPC
 	release
 	end
