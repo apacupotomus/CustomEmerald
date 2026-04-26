@@ -395,13 +395,16 @@ OldaleTown_Text_TownSign:
 	.string "OLDALE TOWN\n"
 	.string "“Where things start off scarce.”$"
 
-@DELETE LATER, Testing NPC for pokemon
+@ DELETE LATER, Testing NPC for pokemon
 TestTrainerScript::
-    giveitem ITEM_RARE_CANDY, 99
-    givemon SPECIES_DEWGONG, 50, ITEM_NONE
-    msgbox TestTrainerScript_Text, MSGBOX_NPC
-    end
+	lock
+	faceplayer
+	giveitem ITEM_RARE_CANDY, 99
+	givemon SPECIES_DEWGONG, 5, ITEM_NONE
+	msgbox TestTrainerScript_Text, MSGBOX_NPC
+	release
+	end
 
-@DELETE LATER, Testing NPC Script
+@ DELETE LATER, Testing NPC Script
 TestTrainerScript_Text:
-    .string "Here's a Pokemon and\nsome Rare Candies!$"
+	.string "Here's a Pokemon and\nsome Rare Candies!$"
