@@ -4757,7 +4757,6 @@ u32 GetBattlerTotalSpeedStat(enum BattlerId battler, enum Ability ability, enum 
         else if (ability == ABILITY_SLUSH_RUSH  && (gBattleWeather & B_WEATHER_ICY_ANY))
             speed *= 2;
     }
-
     // other abilities
     if (ability == ABILITY_QUICK_FEET && gBattleMons[battler].status1 & STATUS1_ANY)
         speed = (speed * 150) / 100;
@@ -4771,6 +4770,19 @@ u32 GetBattlerTotalSpeedStat(enum BattlerId battler, enum Ability ability, enum 
         speed = (GetParadoxBoostedStatId(battler) == STAT_SPEED) ? (speed * 150) / 100 : speed;
     else if (ability == ABILITY_UNBURDEN && gBattleMons[battler].volatiles.unburdenActive)
         speed *= 2;
+
+    if (ability == ABILITY_ALPHA_BETA)
+    {
+        u8 unownCount = CountHealthyUnown(battler);
+        if (unownCount > 0)
+        {
+            /* CALCULATE BONUS MULTIPLIER:
+            > 15% per Unown scaled up by count
+            > 1 Unown = 1.15x, 2 Unown = 1.30x ... 6 Unown = 1.90x
+            > Multiplied by 100 then divided to avoid float math */
+            speed = speed * (100 + (15 * unownCount)) / 100;
+        }
+    }
 
     // player's badge boost
     if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED_LINK | BATTLE_TYPE_FRONTIER))

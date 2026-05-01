@@ -2432,4 +2432,28 @@ const struct AbilityInfo gAbilitiesInfo[ABILITIES_COUNT] =
         .cantBeSwapped = TRUE,
         .cantBeTraced = TRUE,
     },
+    //New ABILITIES
+    [ABILITY_SOUL_EATER] = //Primary ability for Dusckull line, Hidden ability for Gengar
+    {
+        .name = _("Soul Eater"),
+        .description = COMPOUND_STRING("Sp.Atk rises when foe faints."),
+        .aiRating = 5,
+    },
+
+    [ABILITY_LEI] = // New Ability for Bellossom
+    {
+        .name = ("Lei"),
+        .description = COMPOUND_STRING("Heals party in sunlight"),
+        .aiRating = 4,
+    },
+
+    [ABILITY_ALPHA_BETA] = // New Ability for Unown
+    {
+        .name = _("Alpha Beta"),
+        .description = COMPOUND_STRING("More Unown boosts power"), //single line character limit
+        .aiRating = 4, 
+        .cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+    },
 };

@@ -63,6 +63,33 @@ static void ResetParadoxWeatherStat(enum BattlerId battler);
 static void ResetParadoxTerrainStat(enum BattlerId battler);
 static bool32 CanBattlerFormChange(enum BattlerId battler, enum FormChanges method);
 static bool32 IsPowderMoveBlocked(struct BattleContext *ctx);
+/* NEW ABILITY ALPHA BETA
+Stat Multiplier Function
+Will increase al of Unowns stats by 15% per party member that is Unowns species A to ?
+only counts unfainted Unowns
+*/
+u8 CountHealthyUnown(enum BattlerId battlerId)
+{
+    u8 count = 0;
+    u8 i;
+    struct Pokemon* party;
+
+    if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
+        party = gPlayerParty;
+    else
+        party = gEnemyParty; 
+
+    for (i = 0; i < PARTY_SIZE; i++) //for loop, to compare each party member to desired species
+    {
+        u16 species = GetMonData(&party[i], MON_DATA_SPECIES); //looking at party slot i (not including current pokemon
+        u32 hp = GetMonData(&party[i], MON_DATA_HP); //Checking HP of party slot i
+        // Check for all Unown forms (SPECIES_UNOWN is form 0,
+        // expansion uses SPECIES_UNOWN_A through SPECIES_UNOWN_QUESTION etc.)
+        if (GET_BASE_SPECIES_ID(species) == SPECIES_UNOWN && hp > 0) //If the species is unown, and hp is >0 increase count. 
+            count++;
+    }
+    return count; //Final count of party members of Unown species.  
+}
 const u8 *AbsorbedByDrainHpAbility(enum BattlerId battlerDef);
 const u8 *AbsorbedByStatIncreaseAbility(enum BattlerId battlerDef, enum Ability abilityDef, enum Stat statId, u32 statAmount);
 const u8 *AbsorbedByFlashFire(enum BattlerId battlerDef);
@@ -3683,6 +3710,28 @@ u32 AbilityBattleEffects(enum AbilityEffect caseID, enum BattlerId battler, enum
                     effect++;
                 }
                 break;
+            //NEW ABILITY
+            case ABILITY_LEI:
+                if (IsBattlerWeatherAffected(battler, B_WEATHER_SUN)
+                    && !gBattleMons[battler].volatiles.healBlock)
+                {
+                    u32 ally = BATTLE_PARTNER(battler);
+                    if (!IsBattlerAtMaxHp(battler))
+                    {
+                        SetHealAmount(battler, GetNonDynamaxMaxHP(battler) / 16);
+                        BattleScriptExecute(BattleScript_RainDishActivates);
+                        effect++;
+                    }
+                    if (IsBattlerAlive(ally)
+                        && !IsBattlerAtMaxHp(ally)
+                        && !gBattleMons[ally].volatiles.healBlock)
+                    {
+                        SetHealAmount(ally, GetNonDynamaxMaxHP(ally) / 16);
+                        BattleScriptExecute(BattleScript_RainDishActivates);
+                        effect++;
+                    }
+                }
+                break;
             case ABILITY_HYDRATION:
                 if (IsBattlerWeatherAffected(battler, B_WEATHER_RAIN)
                  && gBattleMons[battler].status1 & STATUS1_ANY)
@@ -4534,10 +4583,12 @@ u32 AbilityBattleEffects(enum AbilityEffect caseID, enum BattlerId battler, enum
                 }
             }
             break;
+        // Abilities that raise stats when fainting a pokemon. 
         case ABILITY_MOXIE:
         case ABILITY_CHILLING_NEIGH:
         case ABILITY_AS_ONE_ICE_RIDER:
         case ABILITY_GRIM_NEIGH:
+        case ABILITY_SOUL_EATER:  //New Ability
         case ABILITY_AS_ONE_SHADOW_RIDER:
         case ABILITY_BEAST_BOOST:
             {
@@ -4550,6 +4601,8 @@ u32 AbilityBattleEffects(enum AbilityEffect caseID, enum BattlerId battler, enum
                 if (ability == ABILITY_BEAST_BOOST)
                     stat = GetHighestStatId(battler);
                 else if (ability == ABILITY_GRIM_NEIGH || ability == ABILITY_AS_ONE_SHADOW_RIDER)
+                    stat = STAT_SPATK;
+                else if (ability == ABILITY_SOUL_EATER)  //Soul Eater (new) Raises Special Attack
                     stat = STAT_SPATK;
 
                 if (numMonsFainted && CompareStat(battler, stat, MAX_STAT_STAGE, CMP_LESS_THAN, ability))
@@ -7016,6 +7069,23 @@ static inline u32 CalcAttackStat(struct BattleContext *ctx)
                 modifier = uq4_12_multiply_half_down(modifier, UQ_4_12(1.5));
         }
         break;
+    case ABILITY_ALPHA_BETA: // New Ability Alpha Beta, Attack and Sp. Attack Boost
+    {
+        u8 unownCount = CountHealthyUnown(battlerAtk); // Count unfainted Unown in party
+
+        if (unownCount > 0)
+        {
+            /* CALCULATE BONUS MULTIPLIER:
+                > UQ_4_12(1.0)  = base multiplier (no change)
+                > UQ_4_12(0.15) = 15% per Unown, multiplied by count
+                > 1 Unown = 1.15x, 2 Unown = 1.30x ... 6 Unown = 1.90x */
+            uq4_12_t bonus = UQ_4_12(1.0) + (uq4_12_t)(UQ_4_12(0.15) * unownCount);
+
+            // Boosts both Attack and Sp. Attack regardless of move type
+            modifier = uq4_12_multiply_half_down(modifier, bonus);
+        }
+        break;
+    }
     case ABILITY_MINUS:
         if (IsBattleMoveSpecial(move) && IsBattlerAlive(BATTLE_PARTNER(battlerAtk)))
         {
@@ -7272,10 +7342,28 @@ static inline u32 CalcDefenseStat(struct BattleContext *ctx)
         if (usesDefStat)
         {
             modifier = uq4_12_multiply_half_down(modifier, UQ_4_12(2.0));
+            modifier = uq4_12_multiply_half_down(modifier, UQ_4_12(2.0));
             if (ctx->updateFlags)
                 RecordAbilityBattle(battlerDef, ABILITY_FUR_COAT);
         }
         break;
+    case ABILITY_ALPHA_BETA: // New Ability Alpha Beta, Defense and Sp.Def Boost
+    {
+        u8 unownCount = CountHealthyUnown(battlerDef); // Count unfainted Unown in party
+
+        if (unownCount > 0)
+        {
+            /* CALCULATE BONUS MULTIPLIER:
+                > UQ_4_12(1.0)  = base multiplier (no change)
+                > UQ_4_12(0.15) = 15% per Unown, multiplied by count
+                > 1 Unown = 1.15x, 2 Unown = 1.30x ... 6 Unown = 1.90x */
+            uq4_12_t bonus = UQ_4_12(1.0) + (uq4_12_t)(UQ_4_12(0.15) * unownCount);
+
+            // Apply bonus to Defense modifier using half-down rounding
+            modifier = uq4_12_multiply_half_down(modifier, bonus);
+        }
+        break;
+    }
     case ABILITY_GRASS_PELT:
         if (ctx->fieldStatuses & STATUS_FIELD_GRASSY_TERRAIN && usesDefStat)
         {

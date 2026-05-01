@@ -426,5 +426,5 @@ bool32 CanUseMoveConsecutively(enum BattlerId battler);
 void TryResetConsecutiveUseCounter(enum BattlerId battler);
 void SetOrClearRageVolatile(void);
 enum BattlerId GetTargetBySlot(enum BattlerId battlerAtk, enum BattlerId battlerDef);
-
+u8 CountHealthyUnown(enum BattlerId battlerId); // Alpha Beta ability - counts unfainted Unown in party
 #endif // GUARD_BATTLE_UTIL_H
