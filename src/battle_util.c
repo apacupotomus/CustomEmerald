@@ -4390,6 +4390,66 @@ u32 AbilityBattleEffects(enum AbilityEffect caseID, enum BattlerId battler, enum
                 effect++;
             }
             break;
+
+        //NEW ABILITY ELEMENTAL
+        case ABILITY_ELEMENTAL:
+            if (IsBattlerAlive(gBattlerTarget) // Check that the target is still alive
+                && !gBattleStruct->unableToUseMove // Check the attacker was not prevented from using the move
+                && !IsMoveEffectBlockedByTarget(GetBattlerAbility(gBattlerTarget)) // Check target's ability does not block status effects (ex: Immunity blocks poison)
+                && IsMoveMakingContact(gBattlerAttacker, gBattlerTarget, GetBattlerAbility(gBattlerAttacker), GetBattlerHoldEffect(gBattlerAttacker), move) // Check the move makes physical contact (ex: Punch, Scratch. NOT Flamethrower, Earthquake)
+                && IsBattlerTurnDamaged(gBattlerTarget, EXCLUDING_SUBSTITUTES)) // Check the move actually hit the target (not blocked by Substitute)
+            {
+                // Get the user's primary type first
+                enum Type battlerType = gBattleMons[gBattlerAttacker].types[0];
+
+                // If primary type is not Electric, Fire, or Ice, check secondary type instead
+                // This handles Traced ability prioritizing the correct type on dual typed pokemon
+                if (battlerType != TYPE_ELECTRIC && battlerType != TYPE_FIRE && battlerType != TYPE_ICE)
+                    battlerType = gBattleMons[gBattlerAttacker].types[1];
+
+                // ELECTRIC TYPE: 20% chance to Paralyze the target
+                if (battlerType == TYPE_ELECTRIC
+                    && CanBeParalyzed(gBattlerAttacker, gBattlerTarget, GetBattlerAbility(gBattlerTarget))
+                    && RandomPercentage(RNG_STATIC, 20))
+                {
+                    gEffectBattler = gBattlerTarget;                                // Set the target as the one receiving the effect
+                    gBattleScripting.battler = gBattlerAttacker;                    // Set the attacker as the one triggering the effect
+                    gBattleScripting.moveEffect = MOVE_EFFECT_PARALYSIS;            // Set the status effect to Paralysis
+                    gLastUsedAbility = ABILITY_ELEMENTAL;                           // Set ability name for message display
+                    PREPARE_ABILITY_BUFFER(gBattleTextBuff1, gLastUsedAbility);     // Prepare ability name
+                    BattleScriptCall(BattleScript_AbilityStatusEffect);             // Call the script that displays the status message
+                    effect++;                                                       // Increment effect counter to confirm something happened
+                }
+                // FIRE TYPE: 25% chance to Burn the target
+                else if (battlerType == TYPE_FIRE
+                    && CanBeBurned(gBattlerAttacker, gBattlerTarget, GetBattlerAbility(gBattlerTarget))
+                    && RandomPercentage(RNG_FLAME_BODY, 25))
+                {
+                    gEffectBattler = gBattlerTarget;                               // Set the target as the one receiving the effect
+                    gBattleScripting.battler = gBattlerAttacker;                   // Set the attacker as the one triggering the effect
+                    gBattleScripting.moveEffect = MOVE_EFFECT_BURN;                // Set the status effect to Burn
+                    gLastUsedAbility = ABILITY_ELEMENTAL;                           // Set ability name for message display
+                    PREPARE_ABILITY_BUFFER(gBattleTextBuff1, gLastUsedAbility);     // Prepare ability name
+                    BattleScriptCall(BattleScript_AbilityStatusEffect);            // Call the script that displays the status message
+                    effect++;                                                       // Increment effect counter to confirm something happened
+                }
+                // ICE TYPE: 15% chance to Freeze the target (lower chance due to Freeze being strongest status)
+                else if (battlerType == TYPE_ICE
+                    && CanBeFrozen(gBattlerAttacker, gBattlerTarget, GetBattlerAbility(gBattlerTarget))
+                    && RandomPercentage(RNG_STATIC, 15))
+                {
+                    gEffectBattler = gBattlerTarget;                               // Set the target as the one receiving the effect
+                    gBattleScripting.battler = gBattlerAttacker;                   // Set the attacker as the one triggering the effect
+                    gBattleScripting.moveEffect = MOVE_EFFECT_FREEZE;              // Set the status effect to Freeze
+                    gLastUsedAbility = ABILITY_ELEMENTAL;                           // Set ability name for message display
+                    PREPARE_ABILITY_BUFFER(gBattleTextBuff1, gLastUsedAbility);     // Prepare ability name
+                    BattleScriptCall(BattleScript_AbilityStatusEffect);            // Call the script that displays the status message
+                    effect++;                                                       // Increment effect counter to confirm something happened
+                }
+                // If none of the above types are found, nothing happens
+            }
+            break;
+
         case ABILITY_TOXIC_CHAIN:
             if (gBattleStruct->toxicChainPriority)
             {

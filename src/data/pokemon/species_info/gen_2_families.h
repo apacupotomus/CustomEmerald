@@ -4905,7 +4905,7 @@ const struct SpeciesInfo gSpeciesInfoGen2[] =
         .baseSpeed     = 95,
         .baseSpAttack  = 45,
         .baseSpDefense = 75,
-        .types = MON_TYPES(TYPE_GROUND, TYPE_FLYING),
+        .types = MON_TYPES(TYPE_GROUND, TYPE_POISON), //CHANGED TO FLYING TO POISON, ADDED AIRBORNE ABILITY FOR GROUND IMMUNITY
         .catchRate = 30,
         .expYield = (P_UPDATED_EXP_YIELDS >= GEN_5) ? 179 : 192,
         .evYield_Defense = 2,
@@ -4914,7 +4914,7 @@ const struct SpeciesInfo gSpeciesInfoGen2[] =
         .friendship = STANDARD_FRIENDSHIP,
         .growthRate = GROWTH_MEDIUM_SLOW,
         .eggGroups = MON_EGG_GROUPS(EGG_GROUP_BUG),
-        .abilities = { ABILITY_HYPER_CUTTER, ABILITY_SAND_VEIL, ABILITY_POISON_HEAL },
+        .abilities = { ABILITY_AIRBORNE, ABILITY_NONE, ABILITY_NONE }, //future ability Airborne
         .bodyColor = BODY_COLOR_PURPLE,
         .speciesName = _("Gliscor"),
         .cryId = CRY_GLISCOR,

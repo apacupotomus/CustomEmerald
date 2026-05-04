@@ -956,6 +956,20 @@ bool32 ProteanTryChangeType(enum BattlerId battler, enum Ability ability, enum M
 > trigger for flag is set by use of Flying type move. 
 > trigger to reset flag is set by Ground Type move.
 > Volitile status resets flag on switch and faint
+
+Found in files
+
+include/constants/abilities.h — ability registration
+src/data/abilities.h — name and description
+include/constants/volatile_status.h — custom volatile flag
+src/battle_util.c — ground immunity and damage boost
+src/battle_script_commands.c — flag activation function
+src/battle_move_resolution.c — canceler function and registration
+include/constants/battle_string_ids.h — string IDs
+src/battle_message.c — message text and table
+include/battle_scripts.h — script declaration
+data/battle_scripts_1.s — battle script
+src/data/pokemon/species_info.h — assigned to Gligar
 */
 bool32 AirborneTryActivate(enum BattlerId battler, enum Ability ability, enum Type moveType) //Function calls for the ID, Confirm the pokemon's ability, confirms move type
 {

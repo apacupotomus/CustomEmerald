@@ -2465,4 +2465,10 @@ const struct AbilityInfo gAbilitiesInfo[ABILITIES_COUNT] =
         .cantBeSwapped = TRUE,
         .cantBeTraced = TRUE,
     },
+    [ABILITY_ELEMENTAL] = // New Ability to be assigned to the Legendary Tri Birds
+    {
+        .name = _("Elemental"),
+        .description = COMPOUND_STRING("Contact may inflict status"),
+        .aiRating = 6, 
+    },
 };
