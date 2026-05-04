@@ -1469,8 +1469,8 @@ static enum CancelerResult CancelerAirborne(struct BattleContext* ctx)
             gBattleMons[ctx->battlerAtk].volatiles.airborneActive = TRUE;
             gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_AIRBORNE_ACTIVE;
             gBattlerAbility = ctx->battlerAtk;
-            BattleScriptExecute(BattleScript_AirborneActivates);
-            return CANCELER_RESULT_SUCCESS; // Something triggered pause and run script. 
+            BattleScriptCall(BattleScript_AirborneActivates);
+            return CANCELER_RESULT_BREAK; // Something triggered pause and run script. 
         }
         /* FLAG ON, if the airborne flag is already ON, the following conditions will deactivate it mid battle
             > The moveType == TYPE_GROUND
@@ -1483,8 +1483,8 @@ static enum CancelerResult CancelerAirborne(struct BattleContext* ctx)
             gBattleMons[ctx->battlerAtk].volatiles.airborneActive = FALSE;
             gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_AIRBORNE_GROUNDED;
             gBattlerAbility = ctx->battlerAtk;
-            BattleScriptExecute(BattleScript_AirborneActivates);
-            return CANCELER_RESULT_SUCCESS;  // Something triggered pause and run script. 
+            BattleScriptCall(BattleScript_AirborneActivates);
+            return CANCELER_RESULT_BREAK;  // Something triggered pause and run script. 
         }
     } // If nothing happened continue to the next canceler. 
     return CANCELER_RESULT_SUCCESS;
