@@ -58,6 +58,7 @@ enum CancelerState
     CANCELER_POWDER_STATUS,
     CANCELER_PRIORITY_BLOCK,
     CANCELER_PROTEAN,
+    CANCELER_AIRBORNE, //New Ability Airborne, volitile status of ground immunity
     CANCELER_EXPLODING_DAMP,
     CANCELER_EXPLOSION,
     CANCELER_CHARGING,

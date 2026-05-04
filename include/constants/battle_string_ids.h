@@ -700,6 +700,10 @@ enum StringID
     STRINGID_PKMNDISGUISEWASBUSTED,
     STRINGID_ZENMODETRIGGERED,
     STRINGID_ZENMODEENDED,
+    //NEW strings
+    STRINGID_AIRBORNEACTIVE,        //Airborne ability strings
+    STRINGID_AIRBORNEGROUNDED,      //Airborne ability strings
+    //End New Strings
     STRINGID_COUNT
 };
 
@@ -1184,6 +1188,15 @@ enum ZenModeStringID
 {
     B_MSG_ZEN_MODE_TRIGGERED,
     B_MSG_ZEN_MODE_ENDED,
+};
+
+//NEW STRINGS ADDED TO THE GAME
+
+//Airborne Ability Strings IDs
+enum AirborneStringID
+{
+    B_MSG_AIRBORNE_ACTIVE,
+    B_MSG_AIRBORNE_GROUNDED, 
 };
 
 #endif // GUARD_CONSTANTS_BATTLE_STRING_IDS_H

@@ -6050,6 +6050,8 @@ static bool32 IsBattlerUngroundedByAbilityItemOrEffect(enum BattlerId battler, e
         return TRUE;
     if (ability == ABILITY_LEVITATE)
         return TRUE;
+    if (gBattleMons[battler].volatiles.airborneActive) //Activates New Ability Airborne's ground immunity. 
+        return TRUE;
     return FALSE;
 }
 
@@ -7059,6 +7061,10 @@ static inline u32 CalcAttackStat(struct BattleContext *ctx)
     case ABILITY_OVERGROW:
         if (moveType == TYPE_GRASS && gBattleMons[battlerAtk].hp <= (gBattleMons[battlerAtk].maxHP / 3))
             modifier = uq4_12_multiply_half_down(modifier, UQ_4_12(1.5));
+        break;
+    case ABILITY_AIRBORNE: //new ability has passive effect of bonus flying type damage
+        if (moveType == TYPE_FLYING) //boost only triggered by flying moves
+            modifier = uq4_12_multiply_half_down(modifier, UQ_4_12(1.5)); // 150% Base Damage
         break;
     case ABILITY_PLUS:
         if (IsBattleMoveSpecial(move) && IsBattlerAlive(BATTLE_PARTNER(battlerAtk)))
@@ -10795,7 +10801,7 @@ bool32 IsAffectedByPowderMove(enum BattlerId battler, enum Ability ability, enum
     return TRUE;
 }
 
-void RemoveAbilityFlags(enum BattlerId battler)
+void RemoveAbilityFlags(enum BattlerId battler) //Remove Volatile Flags
 {
     gBattleMons[battler].volatiles.unburdenActive = FALSE;
 
@@ -10815,6 +10821,9 @@ void RemoveAbilityFlags(enum BattlerId battler)
         break;
     case ABILITY_BEADS_OF_RUIN:
         gBattleMons[battler].volatiles.beadsOfRuin = FALSE;
+        break;
+    case ABILITY_AIRBORNE:
+        gBattleMons[battler].volatiles.airborneActive = FALSE; //New Ability Airborne, ground immunity flag clear
         break;
     default:
        break;

@@ -1452,6 +1452,43 @@ static enum CancelerResult CancelerProtean(struct BattleContext *ctx)
     }
     return CANCELER_RESULT_SUCCESS;
 }
+//New Ability Airborne
+static enum CancelerResult CancelerAirborne(struct BattleContext* ctx)
+{
+    enum Type moveType = GetBattleMoveType(ctx->move);  //Gets the type of the move
+
+    if (ctx->abilityAtk == ABILITY_AIRBORNE)        //checks the pokemon for the ability airborne
+    {
+        /* FLAG OFF (DEFAULT), if flag is set to off and the move is a flying move:
+            > Sets the Volitile status "Airborne" to be True. FLAG ON
+            > Send the take of message with battleCommunication function
+            > Tell the game which ability caused the activation, and then calls the appropiate battle script
+        */
+        if (!gBattleMons[ctx->battlerAtk].volatiles.airborneActive && moveType == TYPE_FLYING)
+        {
+            gBattleMons[ctx->battlerAtk].volatiles.airborneActive = TRUE;
+            gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_AIRBORNE_ACTIVE;
+            gBattlerAbility = ctx->battlerAtk;
+            BattleScriptExecute(BattleScript_AirborneActivates);
+            return CANCELER_RESULT_SUCCESS; // Something triggered pause and run script. 
+        }
+        /* FLAG ON, if the airborne flag is already ON, the following conditions will deactivate it mid battle
+            > The moveType == TYPE_GROUND
+            > if true the flag is reset to false. FLAG OFF
+            > call the string to display the grounded message (B_MSG_AIRBORNE_GROUNDED)
+            > Tell the game which ability caused the activation, then call the appropiate battle script
+        */
+        else if (gBattleMons[ctx->battlerAtk].volatiles.airborneActive && moveType == TYPE_GROUND)
+        {
+            gBattleMons[ctx->battlerAtk].volatiles.airborneActive = FALSE;
+            gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_AIRBORNE_GROUNDED;
+            gBattlerAbility = ctx->battlerAtk;
+            BattleScriptExecute(BattleScript_AirborneActivates);
+            return CANCELER_RESULT_SUCCESS;  // Something triggered pause and run script. 
+        }
+    } // If nothing happened continue to the next canceler. 
+    return CANCELER_RESULT_SUCCESS;
+}
 
 static enum CancelerResult CancelerExplodingDamp(struct BattleContext *ctx)
 {
@@ -2020,6 +2057,7 @@ static enum CancelerResult (*const sMoveSuccessOrderCancelers[])(struct BattleCo
     [CANCELER_POWDER_STATUS] = CancelerPowderStatus,
     [CANCELER_PRIORITY_BLOCK] = CancelerPriorityBlock,
     [CANCELER_PROTEAN] = CancelerProtean,
+    [CANCELER_AIRBORNE] = CancelerAirborne, //New Ability Airborn's temporary ground immunity
     [CANCELER_EXPLODING_DAMP] = CancelerExplodingDamp,
     [CANCELER_EXPLOSION] = CancelerExplosion,
     [CANCELER_CHARGING] = CancelerCharging,

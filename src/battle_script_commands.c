@@ -951,6 +951,30 @@ bool32 ProteanTryChangeType(enum BattlerId battler, enum Ability ability, enum M
     }
     return FALSE;
 }
+/* NEW ABILITY: AIRBORNE
+> activating volitile flag for AirborneActive
+> trigger for flag is set by use of Flying type move. 
+> trigger to reset flag is set by Ground Type move.
+> Volitile status resets flag on switch and faint
+*/
+bool32 AirborneTryActivate(enum BattlerId battler, enum Ability ability, enum Type moveType) //Function calls for the ID, Confirm the pokemon's ability, confirms move type
+{
+    if (ability == ABILITY_AIRBORNE
+        && !gBattleMons[battler].volatiles.airborneActive
+        && moveType == TYPE_FLYING) //FLying type trigger
+    {
+        gBattleMons[battler].volatiles.airborneActive = TRUE;
+        return TRUE;
+    }
+    if (ability == ABILITY_AIRBORNE
+        && gBattleMons[battler].volatiles.airborneActive
+        && moveType == TYPE_GROUND) //ground type trigger
+    {
+        gBattleMons[battler].volatiles.airborneActive = FALSE;
+        return TRUE;
+    }
+    return FALSE;
+}
 
 u32 NumAffectedSpreadMoveTargets(void)
 {

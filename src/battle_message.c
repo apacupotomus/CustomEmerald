@@ -877,6 +877,10 @@ const u8 *const gBattleStringsTable[STRINGID_COUNT] =
     [STRINGID_PKMNDISGUISEWASBUSTED]                = COMPOUND_STRING("{B_SCR_NAME_WITH_PREFIX}'s disguise was busted!"),
     [STRINGID_ZENMODETRIGGERED]                     = COMPOUND_STRING("{B_SCR_ABILITY} triggered!"),
     [STRINGID_ZENMODEENDED]                         = COMPOUND_STRING("{B_SCR_ABILITY} ended!"),
+    //New Strings
+    //Airborne Ability Strings
+    [STRINGID_AIRBORNEACTIVE]                      = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} takes off!"),
+    [STRINGID_AIRBORNEGROUNDED]                    = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} is grounded."),
 };
 
 const u16 gTrainerUsedItemStringIds[] =
@@ -1403,6 +1407,15 @@ const u16 gZenModeStringIds[] =
     [B_MSG_ZEN_MODE_TRIGGERED] = STRINGID_ZENMODETRIGGERED,
     [B_MSG_ZEN_MODE_ENDED] = STRINGID_ZENMODEENDED
 };
+//New Strings added
+
+//Airborne Ability 
+const u16 gAirborneStringIds[] =
+{
+    [B_MSG_AIRBORNE_ACTIVE] = STRINGID_AIRBORNEACTIVE,
+    [B_MSG_AIRBORNE_GROUNDED] = STRINGID_AIRBORNEGROUNDED,
+};
+//End new strings added
 
 const u8 gText_PkmnIsEvolving[] = _("What?\n{STR_VAR_1} is evolving!");
 const u8 gText_CongratsPkmnEvolved[] = _("Congratulations! Your {STR_VAR_1}\nevolved into {STR_VAR_2}!{WAIT_SE}\p");

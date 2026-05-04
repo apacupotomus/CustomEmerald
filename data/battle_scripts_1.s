@@ -5452,6 +5452,16 @@ BattleScript_ZenMode::
 	waitmessage B_WAIT_TIME_SHORT
 	end2
 
+@NEW_SCRIPTS_ADDED
+
+@Airborne Ability Script
+BattleScript_AirborneActivates::
+	flushtextbox
+	call BattleScript_AbilityPopUp
+	printfromtable gAirborneStringIds
+	waitmessage B_WAIT_TIME_SHORT
+	end2
+
 BattleScript_BattlerFormChangeDisguise::
 	call BattleScript_AbilityPopUpScripting
 	pause B_WAIT_TIME_LONG

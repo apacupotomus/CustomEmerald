@@ -2442,7 +2442,7 @@ const struct AbilityInfo gAbilitiesInfo[ABILITIES_COUNT] =
 
     [ABILITY_LEI] = // New Ability for Bellossom
     {
-        .name = ("Lei"),
+        .name = _("Lei"),
         .description = COMPOUND_STRING("Heals party in sunlight"),
         .aiRating = 4,
     },
@@ -2452,6 +2452,15 @@ const struct AbilityInfo gAbilitiesInfo[ABILITIES_COUNT] =
         .name = _("Alpha Beta"),
         .description = COMPOUND_STRING("More Unown boosts power"), //single line character limit
         .aiRating = 4, 
+        .cantBeCopied = TRUE,
+        .cantBeSwapped = TRUE,
+        .cantBeTraced = TRUE,
+    },
+    [ABILITY_AIRBORNE] = //New Ability for Gligar family, and Flygon
+    {
+        .name = _("Airborne"),
+        .description = COMPOUND_STRING("Flying moves lift off user"), //single line 30 character limit
+        .aiRating = 7,
         .cantBeCopied = TRUE,
         .cantBeSwapped = TRUE,
         .cantBeTraced = TRUE,
