@@ -6774,6 +6774,34 @@ BattleScript_WeakArmorSpeedPrintString:
 BattleScript_WeakArmorActivatesEnd:
 	return
 
+@NEW SCRIPT FOR PUFF UP ABILITY, RAISING DEF AND SPDEF 2 STAGES, DROPPING SPEED 1 STAGES
+BattleScript_PuffUpActivates::
+	call BattleScript_AbilityPopUp
+	printstring STRINGID_PUFFUPACTIVATES
+	waitmessage B_WAIT_TIME_LONG
+	setstatchanger STAT_DEF, 2, FALSE
+	statbuffchange BS_TARGET, STAT_CHANGE_ALLOW_PTR, BattleScript_PuffUpSpDef
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_STAT_CHANGE_EMPTY, BattleScript_PuffUpSpDef
+	pause B_WAIT_TIME_SHORTEST
+	printfromtable gStatUpStringIds
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_PuffUpSpDef:
+	setstatchanger STAT_SPDEF, 2, FALSE
+	statbuffchange BS_TARGET, STAT_CHANGE_ALLOW_PTR, BattleScript_PuffUpSpeed
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_STAT_CHANGE_EMPTY, BattleScript_PuffUpSpeed
+	pause B_WAIT_TIME_SHORTEST
+	printfromtable gStatUpStringIds
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_PuffUpSpeed:
+	setstatchanger STAT_SPEED, 1, TRUE
+	statbuffchange BS_TARGET, STAT_CHANGE_ALLOW_PTR, BattleScript_PuffUpEnd
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_STAT_CHANGE_EMPTY, BattleScript_PuffUpEnd
+	pause B_WAIT_TIME_SHORTEST
+	printfromtable gStatDownStringIds
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_PuffUpEnd:
+	return
+
 BattleScript_RaiseStatOnFaintingTarget::
 	statbuffchange BS_ATTACKER, STAT_CHANGE_ALLOW_PTR | STAT_CHANGE_ONLY_CHECKING, BattleScript_RaiseStatOnFaintingTarget_End
 	copybyte gBattlerAbility, gBattlerAttacker

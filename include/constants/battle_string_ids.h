@@ -703,6 +703,7 @@ enum StringID
     //NEW strings
     STRINGID_AIRBORNEACTIVE,        //Airborne ability strings
     STRINGID_AIRBORNEGROUNDED,      //Airborne ability strings
+    STRINGID_PUFFUPACTIVATES,       //Puff up ability strings. 
     //End New Strings
     STRINGID_COUNT
 };

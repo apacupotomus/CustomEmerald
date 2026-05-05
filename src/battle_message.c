@@ -881,6 +881,8 @@ const u8 *const gBattleStringsTable[STRINGID_COUNT] =
     //Airborne Ability Strings
     [STRINGID_AIRBORNEACTIVE]                      = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} takes off!"),
     [STRINGID_AIRBORNEGROUNDED]                    = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} is grounded."),
+    //Puff Up Ability Strings
+    [STRINGID_PUFFUPACTIVATES]                     = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX} puffed up!"),
 };
 
 const u16 gTrainerUsedItemStringIds[] =

@@ -2473,11 +2473,17 @@ const struct AbilityInfo gAbilitiesInfo[ABILITIES_COUNT] =
     },
     [ABILITY_MIND_OVER_MATTER] = // New Ability to be assigned Mewtwo
     {
-        .name = _("Mind_Over_Matter"),
-        .description = COMPOUND_STRING("Psychic moves break defenses"),
+        .name = _("Mind Over Matter"),
+        .description = COMPOUND_STRING("PSYCHC moves break defenses"),
         .aiRating = 9,
         .cantBeCopied = TRUE,
         .cantBeTraced = TRUE,
         .cantBeSuppressed = TRUE, 
+    },
+    [ABILITY_PUFF_UP] = // New Ability for Jigglypuff, Wigglytuff, and Qwilfish
+    {
+        .name = _("Puff Up"),
+        .description = COMPOUND_STRING("Puffs up when in danger"),
+        .aiRating = 6,
     },
 };

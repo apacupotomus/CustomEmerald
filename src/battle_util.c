@@ -4063,6 +4063,20 @@ u32 AbilityBattleEffects(enum AbilityEffect caseID, enum BattlerId battler, enum
                 effect++;
             }
             break;
+        //New Ability Puff Up. When user reaches below half of its hp as a result of an attack, its defense and spdef increses 2 stages, and speed drops 1 stage. 
+        case ABILITY_PUFF_UP:
+            if (IsBattlerTurnDamaged(battler, EXCLUDING_SUBSTITUTES) // parameter for direct damage causing trigger
+                && IsBattlerAlive(battler) //Pokemon cannot be fainted
+                && !gBattleMons[battler].volatiles.puffUpActive //Puff Up flag is set to FALSE (Default)
+                && GetBattlerAbility(battler) == ABILITY_PUFF_UP //Defenders ability is Puff Up
+                && gBattleMons[battler].hp < GetNonDynamaxMaxHP(battler) / 2) //HP check; below 50%
+            {
+                gBattleMons[battler].volatiles.puffUpActive = TRUE; //Sets volitile flage Puff Up to true
+                gEffectBattler = gBattlerAbility = battler;
+                BattleScriptCall(BattleScript_PuffUpActivates); // This script will run the stat changes. 
+                effect++; //tells the game the an ability activated. 
+            }
+            break;
         case ABILITY_GOOEY:
         case ABILITY_TANGLING_HAIR:
             if (IsBattlerAlive(gBattlerAttacker)
