@@ -5059,7 +5059,8 @@ bool32 IsMoldBreakerTypeAbility(enum BattlerId battler, enum Ability ability)
     if (ability == ABILITY_MOLD_BREAKER
      || ability == ABILITY_TERAVOLT
      || ability == ABILITY_TURBOBLAZE
-     || (ability == ABILITY_MYCELIUM_MIGHT && IsBattleMoveStatus(gCurrentMove)))
+     || (ability == ABILITY_MYCELIUM_MIGHT && IsBattleMoveStatus(gCurrentMove))
+     || (ability == ABILITY_MIND_OVER_MATTER && GetBattleMoveType(gCurrentMove) == TYPE_PSYCHIC)) // Mind over Matter, NEW ability, bypasses abilities for Psychic type moves. 
     {
         RecordAbilityBattle(battler, ability);
         return TRUE;
@@ -5179,7 +5180,8 @@ u32 IsAbilityPreventingEscape(enum BattlerId battler)
         if (ability == ABILITY_SHADOW_TAG && (B_SHADOW_TAG_ESCAPE <= GEN_3 || GetBattlerAbility(battler) != ABILITY_SHADOW_TAG))
             return battlerDef + 1;
 
-        if (ability == ABILITY_ARENA_TRAP && isBattlerGrounded)
+        if (ability == ABILITY_ARENA_TRAP && isBattlerGrounded
+            && gBattleMons[battlerDef].hp > gBattleMons[battlerDef].maxHP / 5) // NEW Condition for Arena Trap, works on pokemon when HP is Above 20%
             return battlerDef + 1;
 
         if (ability == ABILITY_MAGNET_PULL && IS_BATTLER_OF_TYPE(battler, TYPE_STEEL))
@@ -5476,7 +5478,10 @@ bool32 IsSafeguardProtected(enum BattlerId battlerAtk, enum BattlerId battlerDef
         return FALSE;
     if (IsBattlerAlly(battlerAtk, battlerDef))
         return TRUE;
-    if (abilityAtk == ABILITY_INFILTRATOR)
+    if (abilityAtk == ABILITY_INFILTRATOR || (abilityAtk == ABILITY_MIND_OVER_MATTER && GetBattleMoveType(gCurrentMove) == TYPE_PSYCHIC))
+        /*Added Mind over matter to the Inflitrator check,
+        if the ability is Infiltrator OR Mind over Matter,
+        AND the pokemon with the ability Mindo over matter used a psychic type move*/
         return FALSE;
     return TRUE;
 }
@@ -7241,11 +7246,29 @@ static inline u32 CalcAttackStat(struct BattleContext *ctx)
     case ABILITY_THICK_FAT:
         if (moveType == TYPE_FIRE || moveType == TYPE_ICE)
         {
-            modifier = uq4_12_multiply_half_down(modifier, UQ_4_12(0.5));
+            modifier = uq4_12_multiply_half_down(modifier, UQ_4_12(0.25)); // Changed from 50% resistance to 75% (This is a damage multiplier)
             if (ctx->updateFlags)
                 RecordAbilityBattle(battlerDef, ABILITY_THICK_FAT);
         }
         break;
+
+    //ADDED DAMAGE RESISTANCES FOR MAGMA ARMOR
+    case ABILITY_MAGMA_ARMOR:
+    {
+        if (moveType == TYPE_WATER)
+            {
+                modifier = uq4_12_multiply_half_down(modifier, UQ_4_12(0.25)); //  75% damage reduction (This is a damage multiplier)
+                if (ctx->updateFlags)
+                    RecordAbilityBattle(battlerDef, ABILITY_MAGMA_ARMOR);
+            }
+        else if (moveType == TYPE_ICE)
+        {
+            modifier = uq4_12_multiply_half_down(modifier, UQ_4_12(0.0)); //  immune to ice type attacks
+            if (ctx->updateFlags)
+                RecordAbilityBattle(battlerDef, ABILITY_MAGMA_ARMOR);
+        }
+        break;
+    }
     case ABILITY_PURIFYING_SALT:
         if (moveType == TYPE_GHOST)
         {
@@ -7380,6 +7403,12 @@ static inline u32 CalcDefenseStat(struct BattleContext *ctx)
     // pokemon with unaware ignore defense stat changes while dealing damage
     if (ctx->abilityAtk == ABILITY_UNAWARE)
         defStage = DEFAULT_STAT_STAGE;
+
+    //NEW ABILITY
+    //pokemon with Mind Over Matter ignore defense stat change while dealing damage
+    if (ctx->abilityAtk == ABILITY_MIND_OVER_MATTER && ctx->moveType == TYPE_PSYCHIC)
+        defStage = DEFAULT_STAT_STAGE;
+
     // certain moves also ignore stat changes
     if (MoveIgnoresDefenseEvasionStages(move))
         defStage = DEFAULT_STAT_STAGE;
@@ -7673,7 +7702,13 @@ static inline uq4_12_t GetScreensModifier(struct BattleContext *ctx)
     {
         return UQ_4_12(1.0);
     }
-    if (ctx->abilityAtk == ABILITY_INFILTRATOR && !IsBattlerAlly(ctx->battlerAtk, ctx->battlerDef))
+    if ((ctx->abilityAtk == ABILITY_INFILTRATOR
+        || (ctx->abilityAtk == ABILITY_MIND_OVER_MATTER && ctx->moveType == TYPE_PSYCHIC)) 
+        && !IsBattlerAlly(ctx->battlerAtk, ctx->battlerDef))
+        /*Added Mind over matter to the Inflitrator check,
+        if the ability is Infiltrator OR Mind over Matter,
+        AND the pokemon with the ability Mindo over matter used a psychic type move
+        AND the target is NOT and ally*/
     {
         if (ctx->updateFlags)
             RecordAbilityBattle(ctx->battlerAtk, ctx->abilityAtk);
@@ -9198,6 +9233,20 @@ enum ImmunityHealStatusOutcome TryImmunityAbilityHealStatus(enum BattlerId battl
             outcome = IMMUNITY_STATUS_CLEARED;
         }
         break;
+     //Added THICK_FAT TO THE CASE STATEMENT TO GIVE IMMUNITY TO FREEZING AND BURNING
+    case ABILITY_THICK_FAT:
+        if (gBattleMons[battler].status1 & STATUS1_BURN) // burn immunity
+        {
+            StringCopy(gBattleTextBuff1, gStatusConditionString_BurnJpn);
+            outcome = IMMUNITY_STATUS_CLEARED;
+        }
+        else if (gBattleMons[battler].status1 & STATUS1_ICY_ANY) //freezing immunity
+        {
+            StringCopy(gBattleTextBuff1, gStatusConditionString_IceJpn);
+            outcome = IMMUNITY_STATUS_CLEARED;
+        }
+        break;
+
     case ABILITY_INSOMNIA:
     case ABILITY_VITAL_SPIRIT:
         if (gBattleMons[battler].status1 & STATUS1_SLEEP)

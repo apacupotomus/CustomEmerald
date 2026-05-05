@@ -309,7 +309,7 @@ const struct AbilityInfo gAbilitiesInfo[ABILITIES_COUNT] =
     [ABILITY_MAGMA_ARMOR] =
     {
         .name = _("Magma Armor"),
-        .description = COMPOUND_STRING("Prevents freezing."),
+        .description = COMPOUND_STRING("Resists Water, nullifies Ice"),
         .aiRating = 1,
         .breakable = TRUE,
     },
@@ -2470,5 +2470,14 @@ const struct AbilityInfo gAbilitiesInfo[ABILITIES_COUNT] =
         .name = _("Elemental"),
         .description = COMPOUND_STRING("Contact may inflict status"),
         .aiRating = 6, 
+    },
+    [ABILITY_MIND_OVER_MATTER] = // New Ability to be assigned Mewtwo
+    {
+        .name = _("Mind_Over_Matter"),
+        .description = COMPOUND_STRING("Psychic moves break defenses"),
+        .aiRating = 9,
+        .cantBeCopied = TRUE,
+        .cantBeTraced = TRUE,
+        .cantBeSuppressed = TRUE, 
     },
 };
