@@ -1751,7 +1751,3 @@ EventScript_PalletTown_PlayersHouse_2F_TurnOnPC::
 	.include "data/maps/OldaleTown_House4/scripts.inc"
 
 	.include "data/maps/OldaleTown_House5/scripts.inc"
-
-	.include "data/maps/Smugglers_Path/scripts.inc"
-
-	.include "data/maps/SMUGGLERS_PATH/scripts.inc"

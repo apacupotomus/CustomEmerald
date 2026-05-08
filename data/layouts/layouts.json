@@ -9393,16 +9393,6 @@
       "secondary_tileset": "gTileset_GenericBuilding",
       "border_filepath": "data/layouts/OldaleTown_House5/border.bin",
       "blockdata_filepath": "data/layouts/OldaleTown_House5/map.bin"
-    },
-    {
-      "id": "LAYOUT_SMUGGLERS_PATH",
-      "name": "Smugglers_Path_Layout",
-      "width": 11,
-      "height": 9,
-      "primary_tileset": "gTileset_General",
-      "secondary_tileset": "gTileset_Cave",
-      "border_filepath": "data/layouts/Smugglers_Path/border.bin",
-      "blockdata_filepath": "data/layouts/Smugglers_Path/map.bin"
     }
   ]
 }
