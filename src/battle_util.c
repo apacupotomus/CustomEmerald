@@ -3924,6 +3924,21 @@ u32 AbilityBattleEffects(enum AbilityEffect caseID, enum BattlerId battler, enum
     case ABILITYEFFECT_MOVE_END: // Think contact abilities.
         switch (gLastUsedAbility)
         {
+            /* Modified Run Away
+            >Run Away will now boost Evasiveness when the user is hit by a Super Effective Move.*/
+        case ABILITY_RUN_AWAY:
+            if (IsBattlerTurnDamaged(battler, EXCLUDING_SUBSTITUTES)
+                && IsBattlerAlive(battler)
+                && gBattleStruct->moveResultFlags[battler] & MOVE_RESULT_SUPER_EFFECTIVE 
+                && CompareStat(battler, STAT_EVASION, MAX_STAT_STAGE, CMP_LESS_THAN, gLastUsedAbility))
+            {
+                gEffectBattler = gBattlerAbility = battler;
+                SET_STATCHANGER(STAT_EVASION, 1, FALSE);
+                BattleScriptCall(BattleScript_TargetAbilityStatRaiseRet);
+                effect++;
+            }
+            break;
+
         case ABILITY_JUSTIFIED:
             if (IsBattlerTurnDamaged(battler, EXCLUDING_SUBSTITUTES)
              && IsBattlerAlive(battler)

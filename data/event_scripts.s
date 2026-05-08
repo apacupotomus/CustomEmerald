@@ -1737,3 +1737,21 @@ EventScript_PalletTown_PlayersHouse_2F_TurnOnPC::
 	.include "data/scripts/dexnav.inc"
 	.include "data/scripts/battle_frontier.inc"
 	.include "data/scripts/apricorn_tree.inc"
+
+	.include "data/maps/Starks_Pond/scripts.inc"
+
+	.include "data/maps/Starks_Pond_Indoor/scripts.inc"
+
+	.include "data/maps/OldaleHills/scripts.inc"
+
+	.include "data/maps/Petalburg_Mansion/scripts.inc"
+
+	.include "data/maps/OldaleTown_House3/scripts.inc"
+
+	.include "data/maps/OldaleTown_House4/scripts.inc"
+
+	.include "data/maps/OldaleTown_House5/scripts.inc"
+
+	.include "data/maps/Smugglers_Path/scripts.inc"
+
+	.include "data/maps/SMUGGLERS_PATH/scripts.inc"

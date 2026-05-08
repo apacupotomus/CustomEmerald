@@ -130,7 +130,7 @@
     },
     {
       "id": "MAPSEC_ROUTE_101",
-      "name": "ROUTE 101",
+      "name": "ROUTE_101",
       "x": 4,
       "y": 10,
       "width": 1,
@@ -138,7 +138,7 @@
     },
     {
       "id": "MAPSEC_ROUTE_102",
-      "name": "ROUTE 102",
+      "name": "PETALBURG MANSION",
       "x": 2,
       "y": 9,
       "width": 2,
@@ -1626,6 +1626,10 @@
       "y": 4,
       "width": 1,
       "height": 1
+    },
+    {
+      "id": "MAPSEC_SMUGGLERS_PATH",
+      "name": "SMUGGLERS PATH"
     }
   ]
 }
